@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Antropometri Anak (Sederhana)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>Pengukuran Antropometri Anak</h1>
+      <p class="muted">Versi sederhana (perhitungan dasar). Bukan pengganti penilaian klinis.</p>
+    </header>
+
+    <section class="card">
+      <h2>Input</h2>
+
+      <div class="grid">
+        <label class="field">
+          <span>Jenis kelamin</span>
+          <select id="sex">
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Usia (bulan)</span>
+          <input id="ageMonths" type="number" min="0" max="228" step="1" placeholder="contoh: 24" />
+        </label>
+
+        <label class="field">
+          <span>Berat (kg)</span>
+          <input id="weightKg" type="number" min="0" step="0.01" placeholder="contoh: 12.5" />
+        </label>
+
+        <label class="field">
+          <span>Tinggi/Panjang (cm)</span>
+          <input id="heightCm" type="number" min="0" step="0.1" placeholder="contoh: 88.0" />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="btnCalc" class="primary">Hitung</button>
+        <button id="btnReset" class="secondary">Reset</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Hasil</h2>
+      <div id="result" class="result muted">Masukkan data, lalu klik <b>Hitung</b>.</div>
+    </section>
+
+    <footer class="footer muted">
+      <small>Deploy di GitHub Pages: Paijoedan-hash.github.io</small>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
