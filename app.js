@@ -115,42 +115,42 @@ function calcSchofield() {
     return;
   }
 
-  let bee;
+  let beeKcal;
   const useHeight = Number.isFinite(height) && height > 0;
 
-  // Schofield equations (weight only and weight-height)
+  // Schofield equations
+  // Weight-only equations output MJ/day, weight+height equations output kcal/day
   if (sex === "M") {
     if (age < 3) {
-      bee = useHeight ? (0.167 * weight + 15.174 * (height / 100) - 617.6) * 4.184 : (0.249 * weight - 0.127) * 4.184;
+      beeKcal = useHeight ? (0.167 * weight + 15.174 * (height / 100) - 617.6) : (0.249 * weight - 0.127) * 1000 / 4.184;
     } else if (age < 10) {
-      bee = useHeight ? (19.6 * weight + 130.3 * (height / 100) + 414.9) * 4.184 : (22.7 * weight + 495) * 4.184;
+      beeKcal = useHeight ? (19.6 * weight + 130.3 * (height / 100) + 414.9) : (22.7 * weight + 495);
     } else if (age < 18) {
-      bee = useHeight ? (16.25 * weight + 137.2 * (height / 100) + 515.5) * 4.184 : (17.5 * weight + 651) * 4.184;
+      beeKcal = useHeight ? (16.25 * weight + 137.2 * (height / 100) + 515.5) : (17.5 * weight + 651);
     } else if (age < 30) {
-      bee = useHeight ? (15.057 * weight + 100.8 * (height / 100) + 503.0) * 4.184 : (15.3 * weight + 679) * 4.184;
+      beeKcal = useHeight ? (15.057 * weight + 100.8 * (height / 100) + 503.0) : (15.3 * weight + 679);
     } else if (age < 60) {
-      bee = useHeight ? (11.472 * weight + 53.65 * (height / 100) + 871.83) * 4.184 : (11.6 * weight + 879) * 4.184;
+      beeKcal = useHeight ? (11.472 * weight + 53.65 * (height / 100) + 871.83) : (11.6 * weight + 879);
     } else {
-      bee = useHeight ? (11.711 * weight + 587.7 * (height / 100) - 810.0) * 4.184 : (13.5 * weight + 487) * 4.184;
+      beeKcal = useHeight ? (11.711 * weight + 587.7 * (height / 100) - 810.0) : (13.5 * weight + 487);
     }
   } else {
     if (age < 3) {
-      bee = useHeight ? (16.252 * weight + 10.232 * (height / 100) - 413.5) * 4.184 : (0.244 * weight + 0.130) * 4.184;
+      beeKcal = useHeight ? (16.252 * weight + 10.232 * (height / 100) - 413.5) : (0.244 * weight + 0.130) * 1000 / 4.184;
     } else if (age < 10) {
-      bee = useHeight ? (16.969 * weight + 161.8 * (height / 100) + 371.2) * 4.184 : (22.5 * weight + 499) * 4.184;
+      beeKcal = useHeight ? (16.969 * weight + 161.8 * (height / 100) + 371.2) : (22.5 * weight + 499);
     } else if (age < 18) {
-      bee = useHeight ? (8.365 * weight + 465.0 * (height / 100) + 200.0) * 4.184 : (12.2 * weight + 746) * 4.184;
+      beeKcal = useHeight ? (8.365 * weight + 465.0 * (height / 100) + 200.0) : (12.2 * weight + 746);
     } else if (age < 30) {
-      bee = useHeight ? (13.623 * weight + 266.0 * (height / 100) + 625.0) * 4.184 : (14.7 * weight + 496) * 4.184;
+      beeKcal = useHeight ? (13.623 * weight + 266.0 * (height / 100) + 625.0) : (14.7 * weight + 496);
     } else if (age < 60) {
-      bee = useHeight ? (8.126 * weight + 845.6 * (height / 100) - 4.66) * 4.184 : (8.7 * weight + 829) * 4.184;
+      beeKcal = useHeight ? (8.126 * weight + 845.6 * (height / 100) - 4.66) : (8.7 * weight + 829);
     } else {
-      bee = useHeight ? (9.082 * weight + 658.5 * (height / 100) - 302.1) * 4.184 : (10.5 * weight + 596) * 4.184;
+      beeKcal = useHeight ? (9.082 * weight + 658.5 * (height / 100) - 302.1) : (10.5 * weight + 596);
     }
   }
 
-  // Convert to kcal/day (from kJ/day)
-  const beeKcal = bee / 4.184;
+  const bee = beeKcal * 4.184; // Convert to kJ/day for display
 
   el.classList.remove("muted");
   el.innerHTML = `
@@ -266,7 +266,7 @@ function calcMAP() {
   }
 
   const totalTime = inspTime + expTime;
-  const map = ((pip - peep) * inspTime / totalTime) + peep;
+  const meanAirwayPressure = ((pip - peep) * inspTime / totalTime) + peep;
   
   const ieRatio = `1:${fmt(expTime / inspTime, 2)}`;
 
@@ -279,7 +279,7 @@ function calcMAP() {
       <div><b>Expiratory Time:</b> ${fmt(expTime, 2)} detik</div>
       <div><b>I:E Ratio:</b> ${ieRatio}</div>
       <hr style="border:0;border-top:1px solid rgba(255,255,255,0.12);margin:10px 0;">
-      <div><b>Mean Airway Pressure (MAP):</b> ${fmt(map, 2)} cmH₂O</div>
+      <div><b>Mean Airway Pressure (MAP):</b> ${fmt(meanAirwayPressure, 2)} cmH₂O</div>
       <p class="muted" style="margin:10px 0 0;">
         Catatan: MAP = ((PIP - PEEP) × Ti / (Ti + Te)) + PEEP. MAP penting untuk evaluasi strategi ventilasi dan oksigenasi.
       </p>
@@ -377,7 +377,9 @@ function calcPELOD() {
 
   const totalScore = gcs + pupil + lactate + mapCV + pfRatio + paco2 + creatinine + wbc + platelets + liver;
 
-  // PELOD-2 mortality risk estimation (approximate)
+  // PELOD-2 mortality risk estimation using logistic regression
+  // Formula: P(mortality) = 1 / (1 + exp(-(-0.71 + 0.12 * PELOD2_score)))
+  // Based on Leteurtre et al., Lancet Respir Med. 2013;1(4):289-298
   const mortalityRisk = 100 / (1 + Math.exp(-((-0.71) + (0.12 * totalScore))));
 
   let riskCategory = "";
