@@ -140,40 +140,71 @@
       </section>
     </div>
 
-    <!-- Osmolarity Calculator -->
+    <!-- Osmolarity Calculator (IV Solution - GlobalRPH) -->
     <div class="calculator-section" id="calc-osmolarity">
       <header class="header">
-        <h1>Kalkulator Osmolaritas</h1>
-        <p class="muted">Menghitung osmolaritas serum berdasarkan nilai laboratorium.</p>
+        <h1>Kalkulator Osmolaritas Larutan IV</h1>
+        <p class="muted">Menghitung total osmolaritas larutan IV berdasarkan parameter GlobalRPH.<br>
+        Tentukan apakah larutan aman untuk jalur perifer atau memerlukan jalur vena sentral.</p>
       </header>
 
       <section class="card">
-        <h2>Input</h2>
+        <h2>Input Komponen Larutan IV</h2>
         <div class="grid">
           <label class="field">
-            <span>Sodium/Na (mEq/L)</span>
-            <input id="osm-sodium" type="number" min="0" step="0.1" placeholder="contoh: 140" />
+            <span>Dextrose (gram)</span>
+            <input id="osm-dextrose" type="number" min="0" step="0.1" placeholder="contoh: 50" />
           </label>
 
           <label class="field">
-            <span>Glucose (mg/dL)</span>
-            <input id="osm-glucose" type="number" min="0" step="0.1" placeholder="contoh: 100" />
+            <span>Amino Acids (gram)</span>
+            <input id="osm-amino" type="number" min="0" step="0.1" placeholder="contoh: 50" />
           </label>
 
           <label class="field">
-            <span>BUN (mg/dL)</span>
-            <input id="osm-bun" type="number" min="0" step="0.1" placeholder="contoh: 15" />
+            <span>Sodium/Na⁺ (mEq)</span>
+            <input id="osm-sodium" type="number" min="0" step="0.1" placeholder="contoh: 40" />
           </label>
 
           <label class="field">
-            <span>Potassium/K (mEq/L) - Opsional</span>
-            <input id="osm-potassium" type="number" min="0" step="0.1" placeholder="contoh: 4" />
+            <span>Potassium/K⁺ (mEq)</span>
+            <input id="osm-potassium" type="number" min="0" step="0.1" placeholder="contoh: 20" />
+          </label>
+
+          <label class="field">
+            <span>Magnesium/MgSO₄ (mEq)</span>
+            <input id="osm-magnesium" type="number" min="0" step="0.1" placeholder="contoh: 10" />
+          </label>
+
+          <label class="field">
+            <span>Calcium Gluconate (mEq)</span>
+            <input id="osm-calcium" type="number" min="0" step="0.1" placeholder="contoh: 5" />
+          </label>
+
+          <label class="field">
+            <span>Lipid 20% (mL)</span>
+            <input id="osm-lipid" type="number" min="0" step="0.1" placeholder="contoh: 250" />
+          </label>
+
+          <label class="field">
+            <span>Total Volume (mL)</span>
+            <input id="osm-volume" type="number" min="1" step="1" placeholder="contoh: 1000" />
           </label>
         </div>
 
         <div class="actions">
           <button id="btnOsmolarity" class="primary">Hitung Osmolaritas</button>
           <button id="btnOsmolarityReset" class="secondary">Reset</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Faktor Konversi (GlobalRPH)</h2>
+        <div class="result" style="font-size:13px;line-height:1.9">
+          Dextrose: 3.4 mOsm/gram &nbsp;|&nbsp; Amino Acids: 10 mOsm/gram<br>
+          Na⁺: 2 mOsm/mEq &nbsp;|&nbsp; K⁺: 2 mOsm/mEq<br>
+          MgSO₄: 1 mOsm/mEq &nbsp;|&nbsp; Calcium Gluconate: 1.4 mOsm/mEq<br>
+          Lipid 20%: 1.4 mOsm/mL (≈330 mOsm/L)
         </div>
       </section>
 
