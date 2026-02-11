@@ -108,7 +108,7 @@ function calcSchofield() {
   const height = n(document.getElementById("schofield-height").value);
 
   const errors = [];
-  if (!Number.isFinite(age) || age < 0 || age >= 30) errors.push("Usia harus 0-30 tahun.");
+  if (!Number.isFinite(age) || age < 0 || age > 30) errors.push("Usia harus 0-30 tahun.");
   if (!Number.isFinite(weight) || weight <= 0) errors.push("Berat harus > 0.");
   if (!Number.isFinite(height) || height <= 0) errors.push("Tinggi harus > 0.");
 
