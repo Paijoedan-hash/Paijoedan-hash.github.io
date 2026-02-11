@@ -118,35 +118,37 @@ function calcSchofield() {
   let beeKcal;
   const useHeight = Number.isFinite(height) && height > 0;
 
-  // Schofield equations
-  // Weight-only equations output MJ/day, weight+height equations output kcal/day
+  // Schofield equations (kcal/day)
+  // Weight-only: WHO/FAO/UNU (1985), adopted from Schofield WN. Hum Nutr Clin Nutr. 1985;39 Suppl 1:5-41.
+  // Weight+height: Schofield (1985), height in metres.
+  const heightM = useHeight ? height / 100 : 0;
   if (sex === "M") {
     if (age < 3) {
-      beeKcal = useHeight ? (0.167 * weight + 15.174 * (height / 100) - 617.6) : (0.249 * weight - 0.127) * 1000 / 4.184;
+      beeKcal = useHeight ? (0.167 * weight + 1517.4 * heightM - 617.6) : (60.9 * weight - 54);
     } else if (age < 10) {
-      beeKcal = useHeight ? (19.6 * weight + 130.3 * (height / 100) + 414.9) : (22.7 * weight + 495);
+      beeKcal = useHeight ? (19.6 * weight + 130.3 * heightM + 414.9) : (22.7 * weight + 495);
     } else if (age < 18) {
-      beeKcal = useHeight ? (16.25 * weight + 137.2 * (height / 100) + 515.5) : (17.5 * weight + 651);
+      beeKcal = useHeight ? (16.25 * weight + 137.2 * heightM + 515.5) : (17.5 * weight + 651);
     } else if (age < 30) {
-      beeKcal = useHeight ? (15.057 * weight + 100.8 * (height / 100) + 503.0) : (15.3 * weight + 679);
+      beeKcal = useHeight ? (15.057 * weight + 100.8 * heightM + 503.0) : (15.3 * weight + 679);
     } else if (age < 60) {
-      beeKcal = useHeight ? (11.472 * weight + 53.65 * (height / 100) + 871.83) : (11.6 * weight + 879);
+      beeKcal = useHeight ? (11.472 * weight + 53.65 * heightM + 871.83) : (11.6 * weight + 879);
     } else {
-      beeKcal = useHeight ? (11.711 * weight + 587.7 * (height / 100) - 810.0) : (13.5 * weight + 487);
+      beeKcal = useHeight ? (11.711 * weight + 587.7 * heightM - 810.0) : (13.5 * weight + 487);
     }
   } else {
     if (age < 3) {
-      beeKcal = useHeight ? (16.252 * weight + 10.232 * (height / 100) - 413.5) : (0.244 * weight + 0.130) * 1000 / 4.184;
+      beeKcal = useHeight ? (16.252 * weight + 1023.2 * heightM - 413.5) : (61.0 * weight - 51);
     } else if (age < 10) {
-      beeKcal = useHeight ? (16.969 * weight + 161.8 * (height / 100) + 371.2) : (22.5 * weight + 499);
+      beeKcal = useHeight ? (16.969 * weight + 161.8 * heightM + 371.2) : (22.5 * weight + 499);
     } else if (age < 18) {
-      beeKcal = useHeight ? (8.365 * weight + 465.0 * (height / 100) + 200.0) : (12.2 * weight + 746);
+      beeKcal = useHeight ? (8.365 * weight + 465.0 * heightM + 200.0) : (12.2 * weight + 746);
     } else if (age < 30) {
-      beeKcal = useHeight ? (13.623 * weight + 266.0 * (height / 100) + 625.0) : (14.7 * weight + 496);
+      beeKcal = useHeight ? (13.623 * weight + 266.0 * heightM + 625.0) : (14.7 * weight + 496);
     } else if (age < 60) {
-      beeKcal = useHeight ? (8.126 * weight + 845.6 * (height / 100) - 4.66) : (8.7 * weight + 829);
+      beeKcal = useHeight ? (8.126 * weight + 845.6 * heightM - 4.66) : (8.7 * weight + 829);
     } else {
-      beeKcal = useHeight ? (9.082 * weight + 658.5 * (height / 100) - 302.1) : (10.5 * weight + 596);
+      beeKcal = useHeight ? (9.082 * weight + 658.5 * heightM - 302.1) : (10.5 * weight + 596);
     }
   }
 
@@ -163,7 +165,8 @@ function calcSchofield() {
       <div><b>BEE (Basal Energy Expenditure):</b> ${fmt(beeKcal, 0)} kcal/hari</div>
       <div><b>BEE:</b> ${fmt(bee, 0)} kJ/hari</div>
       <p class="muted" style="margin:10px 0 0;">
-        Catatan: BEE adalah kebutuhan energi basal. Untuk kebutuhan energi total (TEE), perlu dikalikan dengan faktor aktivitas dan stress.
+        Catatan: BEE adalah kebutuhan energi basal. Untuk kebutuhan energi total (TEE), perlu dikalikan dengan faktor aktivitas dan stress.<br>
+        Referensi: Schofield WN. <i>Hum Nutr Clin Nutr.</i> 1985;39 Suppl 1:5-41. WHO/FAO/UNU Technical Report 724 (1985).
       </p>
     </div>
   `;
@@ -228,7 +231,9 @@ function calcOsmolarity() {
       <div><b>Osmolaritas Serum:</b> ${fmt(osmolarity, 1)} mOsm/kg</div>
       <div><b>Interpretasi:</b> ${interpretation}</div>
       <p class="muted" style="margin:10px 0 0;">
-        Catatan: Nilai normal osmolaritas serum: 275-295 mOsm/kg. Formula yang digunakan: 2(Na) + Glucose/18 + BUN/2.8
+        Catatan: Nilai normal osmolaritas serum: 275-295 mOsm/kg.<br>
+        Formula: 2(Na) + Glucose/18 + BUN/2.8.<br>
+        Referensi: Purssell RA, et al. <i>J Toxicol Clin Toxicol.</i> 2001;39(7):721-723.
       </p>
     </div>
   `;
@@ -281,7 +286,8 @@ function calcMAP() {
       <hr style="border:0;border-top:1px solid rgba(255,255,255,0.12);margin:10px 0;">
       <div><b>Mean Airway Pressure (MAP):</b> ${fmt(meanAirwayPressure, 2)} cmH₂O</div>
       <p class="muted" style="margin:10px 0 0;">
-        Catatan: MAP = ((PIP - PEEP) × Ti / (Ti + Te)) + PEEP. MAP penting untuk evaluasi strategi ventilasi dan oksigenasi.
+        Catatan: MAP = ((PIP - PEEP) × Ti / (Ti + Te)) + PEEP (model gelombang persegi).<br>
+        Referensi: Marini JJ, Ravenscraft SA. <i>Chest.</i> 1992;101(2):568-576.
       </p>
     </div>
   `;
@@ -346,7 +352,8 @@ function calcOI() {
       <div><b>Oxygenation Index (OI):</b> ${fmt(oi, 2)}</div>
       <div><b>Interpretasi:</b> ${interpretation}</div>
       <p class="muted" style="margin:10px 0 0;">
-        Catatan: OI = (FiO₂ × MAP × 100) / PaO₂. OI ≥ 25 menunjukkan gagal napas berat dan dapat memerlukan ECMO.
+        Catatan: OI = (FiO₂ × MAP × 100) / PaO₂. OI ≥ 25 menunjukkan gagal napas berat dan dapat memerlukan ECMO.<br>
+        Referensi: Trachsel D, et al. <i>Intensive Care Med.</i> 2005;31(2):327-332.
       </p>
     </div>
   `;
@@ -363,6 +370,7 @@ function resetOI() {
 }
 
 // ===== PELOD-2 SCORE CALCULATOR =====
+// Reference: Leteurtre S, et al. Crit Care Med. 2013;41(7):1761-1773.
 function calcPELOD() {
   const gcs = parseInt(document.getElementById("pelod-gcs").value);
   const pupil = parseInt(document.getElementById("pelod-pupil").value);
@@ -370,17 +378,17 @@ function calcPELOD() {
   const mapCV = parseInt(document.getElementById("pelod-map-cv").value);
   const pfRatio = parseInt(document.getElementById("pelod-pf-ratio").value);
   const paco2 = parseInt(document.getElementById("pelod-paco2").value);
+  const ventilation = parseInt(document.getElementById("pelod-ventilation").value);
   const creatinine = parseInt(document.getElementById("pelod-creatinine").value);
   const wbc = parseInt(document.getElementById("pelod-wbc").value);
   const platelets = parseInt(document.getElementById("pelod-platelets").value);
-  const liver = parseInt(document.getElementById("pelod-liver").value);
 
-  const totalScore = gcs + pupil + lactate + mapCV + pfRatio + paco2 + creatinine + wbc + platelets + liver;
+  const totalScore = gcs + pupil + lactate + mapCV + pfRatio + paco2 + ventilation + creatinine + wbc + platelets;
 
   // PELOD-2 mortality risk estimation using logistic regression
-  // Formula: P(mortality) = 1 / (1 + exp(-(-0.71 + 0.12 * PELOD2_score)))
-  // Based on Leteurtre et al., Lancet Respir Med. 2013;1(4):289-298
-  const mortalityRisk = 100 / (1 + Math.exp(-((-0.71) + (0.12 * totalScore))));
+  // Formula: logit(P) = -6.61 + 0.47 * PELOD2_score
+  // Based on Leteurtre et al., Crit Care Med. 2013;41(7):1761-1773
+  const mortalityRisk = 100 / (1 + Math.exp(-((-6.61) + (0.47 * totalScore))));
 
   let riskCategory = "";
   let severity = "";
@@ -400,7 +408,7 @@ function calcPELOD() {
   el.className = `result ${severity}`;
   el.innerHTML = `
     <div class="kv">
-      <div><b>Total PELOD-2 Score:</b> ${totalScore}</div>
+      <div><b>Total PELOD-2 Score:</b> ${totalScore} / 33</div>
       <div><b>Estimasi Risiko Mortalitas:</b> ${fmt(mortalityRisk, 1)}%</div>
       <div><b>Kategori Risiko:</b> ${riskCategory}</div>
       <hr style="border:0;border-top:1px solid rgba(255,255,255,0.12);margin:10px 0;">
@@ -408,13 +416,13 @@ function calcPELOD() {
         <b>Breakdown Skor:</b><br>
         - Neurologis (GCS + Pupil): ${gcs + pupil}<br>
         - Kardiovaskular (Laktat + MAP): ${lactate + mapCV}<br>
-        - Respirasi (PF Ratio + PaCO₂): ${pfRatio + paco2}<br>
+        - Respirasi (PF Ratio + PaCO₂ + Ventilasi): ${pfRatio + paco2 + ventilation}<br>
         - Renal: ${creatinine}<br>
-        - Hematologi (WBC + Trombosit): ${wbc + platelets}<br>
-        - Hepatik: ${liver}
+        - Hematologi (WBC + Trombosit): ${wbc + platelets}
       </div>
       <p class="muted" style="margin:10px 0 0;">
-        Catatan: PELOD-2 score digunakan untuk menilai disfungsi organ multipel pada anak di ICU. Skor lebih tinggi = risiko mortalitas lebih tinggi.
+        Catatan: PELOD-2 score digunakan untuk menilai disfungsi organ multipel pada anak di ICU. Skor lebih tinggi = risiko mortalitas lebih tinggi.<br>
+        Referensi: Leteurtre S, et al. <i>Crit Care Med.</i> 2013;41(7):1761-1773.
       </p>
     </div>
   `;
@@ -427,10 +435,10 @@ function resetPELOD() {
   document.getElementById("pelod-map-cv").value = "0";
   document.getElementById("pelod-pf-ratio").value = "0";
   document.getElementById("pelod-paco2").value = "0";
+  document.getElementById("pelod-ventilation").value = "0";
   document.getElementById("pelod-creatinine").value = "0";
   document.getElementById("pelod-wbc").value = "0";
   document.getElementById("pelod-platelets").value = "0";
-  document.getElementById("pelod-liver").value = "0";
   const el = document.getElementById("pelod-result");
   el.classList.add("muted");
   el.className = "result muted";
