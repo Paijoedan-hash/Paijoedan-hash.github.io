@@ -81,7 +81,8 @@
     <div class="calculator-section" id="calc-schofield">
       <header class="header">
         <h1>Kalkulator Kalori Schofield</h1>
-        <p class="muted">Menghitung kebutuhan energi basal (BEE) berdasarkan persamaan Schofield.</p>
+        <p class="muted">Menghitung Basal Metabolic Rate (BMR) berdasarkan persamaan Schofield.<br>
+        Sumber: Schofield WN. Hum Nutr Clin Nutr 1985; 39C Suppl 1:5-41 | <a href="http://www.nafwa.org/schofield.php" target="_blank" style="color:var(--primary)">nafwa.org</a></p>
       </header>
 
       <section class="card">
@@ -96,8 +97,8 @@
           </label>
 
           <label class="field">
-            <span>Usia (tahun)</span>
-            <input id="schofield-age" type="number" min="0" max="100" step="1" placeholder="contoh: 5" />
+            <span>Usia (tahun, 0-30)</span>
+            <input id="schofield-age" type="number" min="0" max="29" step="1" placeholder="contoh: 5" />
           </label>
 
           <label class="field">
@@ -106,20 +107,36 @@
           </label>
 
           <label class="field">
-            <span>Tinggi (cm) - Opsional</span>
+            <span>Tinggi (cm)</span>
             <input id="schofield-height" type="number" min="0" step="0.1" placeholder="contoh: 110" />
           </label>
         </div>
 
         <div class="actions">
-          <button id="btnSchofield" class="primary">Hitung BEE</button>
+          <button id="btnSchofield" class="primary">Hitung BMR</button>
           <button id="btnSchofieldReset" class="secondary">Reset</button>
         </div>
       </section>
 
       <section class="card">
+        <h2>Rumus Schofield (W=berat kg, H=tinggi cm)</h2>
+        <div class="result" style="font-size:13px;line-height:1.9">
+          <b>Laki-laki:</b><br>
+          &lt;3 th: 0.167W + 15.174H − 617.6<br>
+          3-10 th: 19.59W + 1.303H + 414.9<br>
+          10-18 th: 16.25W + 1.372H + 515.5<br>
+          18-30 th: 15.057W − 0.1H + 705.8<br><br>
+          <b>Perempuan:</b><br>
+          &lt;3 th: 16.252W + 10.232H − 413.5<br>
+          3-10 th: 16.969W + 1.618H + 371.2<br>
+          10-18 th: 8.365W + 4.65H + 200.0<br>
+          18-30 th: 13.623W + 2.83H + 98.2
+        </div>
+      </section>
+
+      <section class="card">
         <h2>Hasil</h2>
-        <div id="schofield-result" class="result muted">Masukkan data, lalu klik <b>Hitung BEE</b>.</div>
+        <div id="schofield-result" class="result muted">Masukkan data, lalu klik <b>Hitung BMR</b>.</div>
       </section>
     </div>
 

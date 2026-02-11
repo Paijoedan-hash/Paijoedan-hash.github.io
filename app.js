@@ -97,6 +97,10 @@ function resetAnthropometry() {
 }
 
 // ===== SCHOFIELD CALCULATOR =====
+// Reference: Schofield WN. Predicting basal metabolic rate, new standards and
+// review of previous work. Hum Nutr Clin Nutr 1985; 39C Suppl 1:5-41
+// Equations from http://www.nafwa.org/schofield.php
+// W = weight in kg, H = height in cm, result in kcal/day
 function calcSchofield() {
   const sex = document.getElementById("schofield-sex").value;
   const age = n(document.getElementById("schofield-age").value);
@@ -104,8 +108,9 @@ function calcSchofield() {
   const height = n(document.getElementById("schofield-height").value);
 
   const errors = [];
-  if (!Number.isFinite(age) || age < 0) errors.push("Usia tidak valid.");
+  if (!Number.isFinite(age) || age < 0 || age >= 30) errors.push("Usia harus 0-30 tahun.");
   if (!Number.isFinite(weight) || weight <= 0) errors.push("Berat harus > 0.");
+  if (!Number.isFinite(height) || height <= 0) errors.push("Tinggi harus > 0.");
 
   const el = document.getElementById("schofield-result");
 
@@ -116,54 +121,51 @@ function calcSchofield() {
   }
 
   let beeKcal;
-  const useHeight = Number.isFinite(height) && height > 0;
 
-  // Schofield equations
-  // Weight-only equations output MJ/day, weight+height equations output kcal/day
+  // Schofield equations (W = weight in kg, H = height in cm)
   if (sex === "M") {
     if (age < 3) {
-      beeKcal = useHeight ? (0.167 * weight + 15.174 * (height / 100) - 617.6) : (0.249 * weight - 0.127) * 1000 / 4.184;
+      beeKcal = 0.167 * weight + 15.174 * height - 617.6;
     } else if (age < 10) {
-      beeKcal = useHeight ? (19.6 * weight + 130.3 * (height / 100) + 414.9) : (22.7 * weight + 495);
+      beeKcal = 19.59 * weight + 1.303 * height + 414.9;
     } else if (age < 18) {
-      beeKcal = useHeight ? (16.25 * weight + 137.2 * (height / 100) + 515.5) : (17.5 * weight + 651);
-    } else if (age < 30) {
-      beeKcal = useHeight ? (15.057 * weight + 100.8 * (height / 100) + 503.0) : (15.3 * weight + 679);
-    } else if (age < 60) {
-      beeKcal = useHeight ? (11.472 * weight + 53.65 * (height / 100) + 871.83) : (11.6 * weight + 879);
+      beeKcal = 16.25 * weight + 1.372 * height + 515.5;
     } else {
-      beeKcal = useHeight ? (11.711 * weight + 587.7 * (height / 100) - 810.0) : (13.5 * weight + 487);
+      beeKcal = 15.057 * weight - 0.1 * height + 705.8;
     }
   } else {
     if (age < 3) {
-      beeKcal = useHeight ? (16.252 * weight + 10.232 * (height / 100) - 413.5) : (0.244 * weight + 0.130) * 1000 / 4.184;
+      beeKcal = 16.252 * weight + 10.232 * height - 413.5;
     } else if (age < 10) {
-      beeKcal = useHeight ? (16.969 * weight + 161.8 * (height / 100) + 371.2) : (22.5 * weight + 499);
+      beeKcal = 16.969 * weight + 1.618 * height + 371.2;
     } else if (age < 18) {
-      beeKcal = useHeight ? (8.365 * weight + 465.0 * (height / 100) + 200.0) : (12.2 * weight + 746);
-    } else if (age < 30) {
-      beeKcal = useHeight ? (13.623 * weight + 266.0 * (height / 100) + 625.0) : (14.7 * weight + 496);
-    } else if (age < 60) {
-      beeKcal = useHeight ? (8.126 * weight + 845.6 * (height / 100) - 4.66) : (8.7 * weight + 829);
+      beeKcal = 8.365 * weight + 4.65 * height + 200.0;
     } else {
-      beeKcal = useHeight ? (9.082 * weight + 658.5 * (height / 100) - 302.1) : (10.5 * weight + 596);
+      beeKcal = 13.623 * weight + 2.83 * height + 98.2;
     }
   }
 
   const bee = beeKcal * 4.184; // Convert to kJ/day for display
 
+  let ageGroup;
+  if (age < 3) ageGroup = "< 3 tahun";
+  else if (age < 10) ageGroup = "3-10 tahun";
+  else if (age < 18) ageGroup = "10-18 tahun";
+  else ageGroup = "18-30 tahun";
+
   el.classList.remove("muted");
   el.innerHTML = `
     <div class="kv">
       <div><b>Jenis kelamin:</b> ${sex === "M" ? "Laki-laki" : "Perempuan"}</div>
-      <div><b>Usia:</b> ${fmt(age, 0)} tahun</div>
+      <div><b>Usia:</b> ${fmt(age, 0)} tahun (kelompok: ${ageGroup})</div>
       <div><b>Berat:</b> ${fmt(weight, 1)} kg</div>
-      ${useHeight ? `<div><b>Tinggi:</b> ${fmt(height, 1)} cm</div>` : ''}
+      <div><b>Tinggi:</b> ${fmt(height, 1)} cm</div>
       <hr style="border:0;border-top:1px solid rgba(255,255,255,0.12);margin:10px 0;">
-      <div><b>BEE (Basal Energy Expenditure):</b> ${fmt(beeKcal, 0)} kcal/hari</div>
-      <div><b>BEE:</b> ${fmt(bee, 0)} kJ/hari</div>
+      <div><b>BMR (Basal Metabolic Rate):</b> ${fmt(beeKcal, 1)} kcal/hari</div>
+      <div><b>BMR:</b> ${fmt(bee, 1)} kJ/hari</div>
       <p class="muted" style="margin:10px 0 0;">
-        Catatan: BEE adalah kebutuhan energi basal. Untuk kebutuhan energi total (TEE), perlu dikalikan dengan faktor aktivitas dan stress.
+        Sumber: Schofield WN. Hum Nutr Clin Nutr 1985; 39C Suppl 1:5-41<br>
+        Catatan: BMR adalah kebutuhan energi basal. Untuk kebutuhan energi total (TEE), perlu dikalikan dengan faktor aktivitas dan stress.
       </p>
     </div>
   `;
@@ -176,7 +178,7 @@ function resetSchofield() {
   document.getElementById("schofield-height").value = "";
   const el = document.getElementById("schofield-result");
   el.classList.add("muted");
-  el.textContent = "Masukkan data, lalu klik Hitung BEE.";
+  el.textContent = "Masukkan data, lalu klik Hitung BMR.";
 }
 
 // ===== OSMOLARITY CALCULATOR =====
