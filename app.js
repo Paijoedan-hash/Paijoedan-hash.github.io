@@ -181,17 +181,26 @@ function resetSchofield() {
   el.textContent = "Masukkan data, lalu klik Hitung BMR.";
 }
 
-// ===== OSMOLARITY CALCULATOR =====
+// ===== OSMOLARITY CALCULATOR (IV Solution - GlobalRPH) =====
 function calcOsmolarity() {
-  const sodium = n(document.getElementById("osm-sodium").value);
-  const glucose = n(document.getElementById("osm-glucose").value);
-  const bun = n(document.getElementById("osm-bun").value);
-  const potassium = n(document.getElementById("osm-potassium").value);
+  const dextrose = n(document.getElementById("osm-dextrose").value) || 0;
+  const amino = n(document.getElementById("osm-amino").value) || 0;
+  const sodium = n(document.getElementById("osm-sodium").value) || 0;
+  const potassium = n(document.getElementById("osm-potassium").value) || 0;
+  const magnesium = n(document.getElementById("osm-magnesium").value) || 0;
+  const calcium = n(document.getElementById("osm-calcium").value) || 0;
+  const lipid = n(document.getElementById("osm-lipid").value) || 0;
+  const volume = n(document.getElementById("osm-volume").value);
 
   const errors = [];
-  if (!Number.isFinite(sodium) || sodium <= 0) errors.push("Sodium harus > 0.");
-  if (!Number.isFinite(glucose) || glucose < 0) errors.push("Glucose harus ≥ 0.");
-  if (!Number.isFinite(bun) || bun < 0) errors.push("BUN harus ≥ 0.");
+  if (!Number.isFinite(volume) || volume <= 0) errors.push("Total Volume harus > 0.");
+  if (dextrose < 0) errors.push("Dextrose harus ≥ 0.");
+  if (amino < 0) errors.push("Amino Acids harus ≥ 0.");
+  if (sodium < 0) errors.push("Sodium harus ≥ 0.");
+  if (potassium < 0) errors.push("Potassium harus ≥ 0.");
+  if (magnesium < 0) errors.push("Magnesium harus ≥ 0.");
+  if (calcium < 0) errors.push("Calcium harus ≥ 0.");
+  if (lipid < 0) errors.push("Lipid harus ≥ 0.");
 
   const el = document.getElementById("osmolarity-result");
 
@@ -201,48 +210,72 @@ function calcOsmolarity() {
     return;
   }
 
-  // Formula: Osm = 2(Na) + Glucose/18 + BUN/2.8
-  // Alternative with K: Osm = 2(Na + K) + Glucose/18 + BUN/2.8
-  let osmolarity;
-  if (Number.isFinite(potassium) && potassium > 0) {
-    osmolarity = 2 * (sodium + potassium) + (glucose / 18) + (bun / 2.8);
-  } else {
-    osmolarity = 2 * sodium + (glucose / 18) + (bun / 2.8);
-  }
+  // GlobalRPH conversion factors
+  const mOsmDextrose = dextrose * 3.4;
+  const mOsmAmino = amino * 10;
+  const mOsmSodium = sodium * 2;
+  const mOsmPotassium = potassium * 2;
+  const mOsmMagnesium = magnesium * 1;
+  const mOsmCalcium = calcium * 1.4;
+  const mOsmLipid = lipid * 1.4;
+
+  const totalMOsm = mOsmDextrose + mOsmAmino + mOsmSodium + mOsmPotassium + mOsmMagnesium + mOsmCalcium + mOsmLipid;
+  const volumeL = volume / 1000;
+  const osmolarity = totalMOsm / volumeL;
 
   let interpretation = "";
-  if (osmolarity < 275) {
-    interpretation = "Hypo-osmolar (< 275 mOsm/kg)";
-  } else if (osmolarity <= 295) {
-    interpretation = "Normal (275-295 mOsm/kg)";
+  let severity = "";
+  if (osmolarity < 600) {
+    interpretation = "Aman untuk Vena Perifer (< 600 mOsm/L)";
+    severity = "result-success";
+  } else if (osmolarity < 900) {
+    interpretation = "Risiko Phlebitis — pantau ketat jika jalur perifer (600–900 mOsm/L)";
+    severity = "result-warning";
   } else {
-    interpretation = "Hyper-osmolar (> 295 mOsm/kg)";
+    interpretation = "WAJIB melalui Jalur Vena Sentral (≥ 900 mOsm/L)";
+    severity = "result-danger";
   }
 
   el.classList.remove("muted");
+  el.className = `result ${severity}`;
   el.innerHTML = `
     <div class="kv">
-      <div><b>Sodium (Na):</b> ${fmt(sodium, 1)} mEq/L</div>
-      <div><b>Glucose:</b> ${fmt(glucose, 1)} mg/dL</div>
-      <div><b>BUN:</b> ${fmt(bun, 1)} mg/dL</div>
-      ${Number.isFinite(potassium) && potassium > 0 ? `<div><b>Potassium (K):</b> ${fmt(potassium, 1)} mEq/L</div>` : ''}
+      <div style="font-size:13px;margin-bottom:12px;">
+        <b>Rincian Kontribusi mOsm:</b><br>
+        ${dextrose > 0 ? `- Dextrose: ${fmt(dextrose,1)} g × 3.4 = ${fmt(mOsmDextrose,1)} mOsm<br>` : ''}
+        ${amino > 0 ? `- Amino Acids: ${fmt(amino,1)} g × 10 = ${fmt(mOsmAmino,1)} mOsm<br>` : ''}
+        ${sodium > 0 ? `- Na⁺: ${fmt(sodium,1)} mEq × 2 = ${fmt(mOsmSodium,1)} mOsm<br>` : ''}
+        ${potassium > 0 ? `- K⁺: ${fmt(potassium,1)} mEq × 2 = ${fmt(mOsmPotassium,1)} mOsm<br>` : ''}
+        ${magnesium > 0 ? `- MgSO₄: ${fmt(magnesium,1)} mEq × 1 = ${fmt(mOsmMagnesium,1)} mOsm<br>` : ''}
+        ${calcium > 0 ? `- Ca Gluconate: ${fmt(calcium,1)} mEq × 1.4 = ${fmt(mOsmCalcium,1)} mOsm<br>` : ''}
+        ${lipid > 0 ? `- Lipid 20%: ${fmt(lipid,1)} mL × 1.4 = ${fmt(mOsmLipid,1)} mOsm<br>` : ''}
+      </div>
       <hr style="border:0;border-top:1px solid rgba(255,255,255,0.12);margin:10px 0;">
-      <div><b>Osmolaritas Serum:</b> ${fmt(osmolarity, 1)} mOsm/kg</div>
-      <div><b>Interpretasi:</b> ${interpretation}</div>
+      <div><b>Total mOsm:</b> ${fmt(totalMOsm, 1)} mOsm</div>
+      <div><b>Total Volume:</b> ${fmt(volume, 0)} mL (${fmt(volumeL, 2)} L)</div>
+      <div><b>Osmolaritas Larutan:</b> ${fmt(osmolarity, 1)} mOsm/L</div>
+      <hr style="border:0;border-top:1px solid rgba(255,255,255,0.12);margin:10px 0;">
+      <div><b>Jalur Pemberian:</b> ${interpretation}</div>
       <p class="muted" style="margin:10px 0 0;">
-        Catatan: Nilai normal osmolaritas serum: 275-295 mOsm/kg. Formula yang digunakan: 2(Na) + Glucose/18 + BUN/2.8
+        Batas: &lt;600 aman perifer | 600–900 risiko phlebitis | ≥900 wajib vena sentral.<br>
+        Rumus: Osmolaritas = Σ(mOsm komponen) ÷ Volume (L)
       </p>
     </div>
   `;
 }
 
 function resetOsmolarity() {
+  document.getElementById("osm-dextrose").value = "";
+  document.getElementById("osm-amino").value = "";
   document.getElementById("osm-sodium").value = "";
-  document.getElementById("osm-glucose").value = "";
-  document.getElementById("osm-bun").value = "";
   document.getElementById("osm-potassium").value = "";
+  document.getElementById("osm-magnesium").value = "";
+  document.getElementById("osm-calcium").value = "";
+  document.getElementById("osm-lipid").value = "";
+  document.getElementById("osm-volume").value = "";
   const el = document.getElementById("osmolarity-result");
   el.classList.add("muted");
+  el.className = "result muted";
   el.textContent = "Masukkan data, lalu klik Hitung Osmolaritas.";
 }
 
