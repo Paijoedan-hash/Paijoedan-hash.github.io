@@ -154,6 +154,12 @@ function calcSchofield() {
 
   const bee = beeKcal * 4.184; // Convert to kJ/day for display
 
+  if (beeKcal <= 0) {
+    el.classList.remove("muted");
+    el.innerHTML = `<b>Periksa input:</b> Hasil BEE tidak valid (≤ 0). Persamaan Schofield tidak berlaku untuk berat badan sangat rendah.`;
+    return;
+  }
+
   el.classList.remove("muted");
   el.innerHTML = `
     <div class="kv">
@@ -388,7 +394,7 @@ function calcPELOD() {
   // PELOD-2 mortality risk estimation using logistic regression
   // Formula: logit(P) = -6.61 + 0.47 * PELOD2_score
   // Based on Leteurtre et al., Crit Care Med. 2013;41(7):1761-1773
-  const mortalityRisk = 100 / (1 + Math.exp(-((-6.61) + (0.47 * totalScore))));
+  const mortalityRisk = 100 / (1 + Math.exp(6.61 - 0.47 * totalScore));
 
   let riskCategory = "";
   let severity = "";
